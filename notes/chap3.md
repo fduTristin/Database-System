@@ -79,8 +79,8 @@ assets integer)
 not null
 primary key (A1,A2,...An)
 foreign key (Ak1,Ak2,...,Akn) references s
-check(P), where P is a predicate 
-//e.g.
+check(P) --  P is a predicate 
+--e.g.
 create table instructor
 (ID varchar(5),
 name varchar(20) not null,
@@ -234,7 +234,7 @@ where P;
     ```sql
     select name, title
     from (instructor natural join teaches) join course using (course_id)
-    // it is equivalent to
+    -- it is equivalent to
     select name, title
     from instructor natural join teaches,course
     where teaches.course_id = course.course_id
@@ -242,7 +242,7 @@ where P;
 
 ## Additional Basic Operations
 
-#### rename
+### rename
 
 ```sql
 old_name as new_name
@@ -252,34 +252,34 @@ from borrower, loan
 where borrower.loan_number = loan.loan_number
 ```
 
-#### tuple variables are defined in the from clause via the use of the as clause
+### tuple variables are defined in the from clause via the use of the as clause
 
 ```sql
-//Find the customer names and their loan numbers for all customers having a loan at some branch
+--Find the customer names and their loan numbers for all customers having a loan at some branch
 select customer_name, T.loan_number, S.amount
 from borrower as T, loan as S
 where T.loan_number = S.loan_number
 ```
 
-#### string operations
+### string operations
 
 * string-matching operator
-    * %: The % character matches any substring
-    * _: The _ character matches any character
+  * %: The % character matches any substring
+  * _: The $\_$ character matches any character
 
 * **like / not like**: operator for pattern matching, e.g.
 
     ```sql
-    //Find the names of all customers whose street includes (or not) the substring “Main”
+    --Find the names of all customers whose street includes (or not) the substring “Main”
     select customer_name
     from customer
     where customer_street like '%Main%'
     ```
 
 * string operations
-    * concatenation  using "||"
-    * converting from upper to lower case (and vice versa)
-    * finding string length,extracting substrings, etc.
+  * concatenation  using "||"
+  * converting from upper to lower case (and vice versa)
+  * finding string length,extracting substrings, etc.
 
 #### Order the Display of Tuples
 
@@ -311,7 +311,7 @@ where T.loan_number = S.loan_number
     from instructor, teaches
     where (instructor.ID, dept_name) = (teaches.ID, 'Biology');
 
-    //equivalent expression
+    --equivalent expression
     select name, course_id
     from instructor, teaches
     where instructor.ID=teaches.ID and dept_name='Biology'
@@ -321,21 +321,21 @@ where T.loan_number = S.loan_number
 
 * the **union, intersect, except** operations automatically eliminates duplicates
 * To retain all duplicates, use **union all, intersect all, except all**
-    * Suppose a tuple occurs **m** times in **r**, **n** times in **s**, then it occurs:
-        * **m+n** times in `r union all s`
-        * **min(m,n)** times in `r intersect all s`
-        * **max(0,m-n)** times in `r except all s`
+  * Suppose a tuple occurs **m** times in **r**, **n** times in **s**, then it occurs:
+    * **m+n** times in `r union all s`
+    * **min(m,n)** times in `r intersect all s`
+    * **max(0,m-n)** times in `r except all s`
 
 ```sql
-//Find all customers who have a loan, an account, or both:
+--Find all customers who have a loan, an account, or both:
 (select customer_name from depositor)
 union [all]
 (select customer_name from borrower)
-//Find all customers who have both a loan and an account.
+--Find all customers who have both a loan and an account.
 (select customer_name from depositor)
 intersect [all]
 (select customer_name from borrower)
-//Find all customers who have an account but no loan.
+--Find all customers who have an account but no loan.
 (select customer_name from depositor)
 except [all]
 (select customer_name from borrower)
@@ -347,16 +347,16 @@ except [all]
 * the predicate **is null** is used to check null values
 * aggregate functions simply ignore null values
 * any arithmetic expression involving null is null
-    * 5 + null = null
+  * 5 + null = null
 * any comparison with null returns unknown
-    * 5 < null null <> null
+  * 5 < null null <> null
 * three-valued logic using the truth value unknown:
-    * **OR**: (unknown or true) = true, (unknown or false) = unknown, (unknown or unknown) = unknown
-    * **AND**: (true and unknown) = unknown, (false and unknown) = false, (unknown and unknown) = unknown
-    * **NOT**: (not unknown) = unknown
+  * **OR**: (unknown or true) = true, (unknown or false) = unknown, (unknown or unknown) = unknown
+  * **AND**: (true and unknown) = unknown, (false and unknown) = false, (unknown and unknown) = unknown
+  * **NOT**: (not unknown) = unknown
 * Result of where clause predicate is treated as false if it evaluates to **unknown**
 
-*  All aggregate operations except **count(*)** ignore tuples with null values on the aggregated attributes
+* All aggregate operations except **count(*)** ignore tuples with null values on the aggregated attributes
 
 ## Aggregate Functions
 
@@ -367,16 +367,16 @@ except [all]
 – **count**: number of values
 
 ```sql
-//Find the average account balance at the Perryridge branch
+--Find the average account balance at the Perryridge branch
 select avg (balance)
 from account
 where branch_name = 'Perryridge'
 
-//Find the number of tuples in the customer relation
+--Find the number of tuples in the customer relation
 select count (*)
 from customer
 
-//Find the number of depositors in the bank
+--Find the number of depositors in the bank
 select count (distinct customer_name)
 from depositor
 ```
@@ -384,7 +384,7 @@ from depositor
 * group by
 
     ```sql
-    // Find the number of depositors for each branch
+    -- Find the number of depositors for each branch
     select branch_name, count (distinct customer_name)
     from depositor, account
     where depositor.account_number = account.account_number
@@ -396,7 +396,7 @@ from depositor
 * having clause: state a condition that applies to groups rather than to tuples
 
     ```sql
-    //find the names of all branches where the average account balance is more than $1,200.
+    --find the names of all branches where the average account balance is more than $1,200.
     select branch_name, avg (balance)
     from account
     group by branch_name
@@ -404,11 +404,11 @@ from depositor
     ```
 
 * note:
-    * predicates in the **having** clause are applied **after** the information of groups whereas
-    * predicates in the **where** clause are applied **before** forming groups
+  * predicates in the **having** clause are applied **after** the information of groups whereas
+  * predicates in the **where** clause are applied **before** forming groups
 
     ```sql
-    //find the average balance for each customer who lives in Harrison and has at least three accounts
+    --find the average balance for each customer who lives in Harrison and has at least three accounts
     select depositor.customer_name, avg (balance)
     from depositor, account, customer
     where depositor.account_number=account.account_number
@@ -430,13 +430,13 @@ from depositor
 ### Set Membership
 
 ```sql
-//Find all customers who have both an account and a loan at the bank
+--Find all customers who have both an account and a loan at the bank
 select distinct customer_name
 from borrower
 where customer_name in (select customer_name
 from depositor)
 
-//Find all customers who have a loan but do not have an account at the bank
+--Find all customers who have a loan but do not have an account at the bank
 select distinct customer_name
 from borrower
 where customer_name not in (select customer_name
@@ -446,12 +446,12 @@ from depositor)
 ### Set Comparison
 
 ```sql
-//Find all branches that have greater assets than some branch located in Brooklyn
+--Find all branches that have greater assets than some branch located in Brooklyn
 select distinct T.branch_name
 from branch as T, branch as S
 where T.assets > S.assets and S.branch_city = 'Brooklyn'
 
-//Same query using >some clause
+--Same query using >some clause
 select branch_name
 from branch
 where assets > some
@@ -470,7 +470,7 @@ where branch_city = 'Brooklyn')
 * $F<comp> all~r \iff \forall t \in r， (F<comp>t)$
 
 ```sql
-//Find the names of all branches that have greater assets than all branches located in Brooklyn.
+--Find the names of all branches that have greater assets than all branches located in Brooklyn.
 select branch_name
 from branch
 where assets > all
@@ -486,7 +486,7 @@ where branch_city = 'Brooklyn')
 – not exists 𝒓 ⇔ 𝒓 = ∅
 
     ```sql
-    // find all customers who have both an account & a loan at the bank
+    -- find all customers who have both an account & a loan at the bank
     select customer_name
     from borrower
     where exists (
@@ -496,9 +496,9 @@ where branch_city = 'Brooklyn')
     ```
 
 ```sql
-//Find all customers who have both an account and a loan at the bank
+--Find all customers who have both an account and a loan at the bank
 
-//1
+--1
 select customer_name
 from borrower
 where exists (
@@ -506,13 +506,13 @@ where exists (
     from depositor
     where depositor.customer_name = borrower.customer_name)
 
-//2
+--2
 select distinct customer_name
 from borrower
 where customer_name in (select customer_name
                         from depositor)
 
-//3
+--3
 select distinct customer_name
 from borrower, loan
 where borrower.loan_number = loan.loan_number and (branch_name, customer_name) in
@@ -522,7 +522,7 @@ where borrower.loan_number = loan.loan_number and (branch_name, customer_name) i
 ```
 
 ```sql
-//Find all customers who have accounts at all branches located in Brooklyn
+--Find all customers who have accounts at all branches located in Brooklyn
 select distinct S.customer_name
 from depositor as S
 where not exists (
@@ -542,7 +542,7 @@ S.customer_name = T.customer_name))
 * Write "relation A contains relation B" as "**not exists (B except A)**."
 
     ```sql
-    //find all students who have taken all courses offered by the Biology department 
+    --find all students who have taken all courses offered by the Biology department 
     select distinct S.ID, S.name
     from student as S
     where not exists ((select course_id
@@ -559,7 +559,7 @@ S.customer_name = T.customer_name))
 * The **unique** construct tests whether a subquery has any duplicate tuples in its result
 
     ```sql
-    //find all customers who have at most one account at the Perryridge branch
+    --find all customers who have at most one account at the Perryridge branch
     select T.customer_name
     from depositor as T
     where unique (
@@ -569,7 +569,7 @@ S.customer_name = T.customer_name))
     R.account_number = account.account_number and
     account.branch_name = 'Perryridge')
 
-    //Find all customers who have at least two accounts at the Perryridge branch. 
+    --Find all customers who have at least two accounts at the Perryridge branch. 
     select distinct T.customer_name
     from depositor T
     where not unique(
@@ -597,7 +597,7 @@ S.customer_name = T.customer_name))
 #### view definition
 
 ```sql
-//A view consisting of branches and their customers
+--A view consisting of branches and their customers
 create view all_customer as
 (select branch_name, customer_name
 from depositor, account
@@ -607,7 +607,7 @@ union
 from borrower, loan
 where borrower.loan_number = loan.loan_number)
 
-//Find all customers of the Perryridge branch
+--Find all customers of the Perryridge branch
 select customer_name
 from all_customer
 where branch_name = 'Perryridge'
@@ -621,7 +621,7 @@ from account
 group by branch_name
 having avg (balance) > 1200
 
-//equivalent
+--equivalent
 select branch_name, avg_balance
 from (select branch_name, avg (balance)
     from account
@@ -633,7 +633,7 @@ where avg_balance > 1200
 * Note: we do not need to use the having clause, since we compute **the temporary (view) relation result in the from clause**, and the attributes of result can be used directly in the where clause
 
 ```sql
-//Find the maximum total balance across all branches
+--Find the maximum total balance across all branches
 select max(tot_balance)
 from (select branch_name, sum (balance)
 from account
@@ -646,10 +646,11 @@ as branch_total (branch_name, tot_balance)
 * **With** clause allows **views** to be defined **locally** to a query, rather than globally. Analogous to procedures in a programming language
 
 ```sql
-//Find all accounts with the maximum balance. 
+--Find all accounts with the maximum balance. 
 with max_balance(value) as
 select max(balance)
 from account
+
 select account_number
 from account, max_balance
 where account.balance = max_balance.value
@@ -662,8 +663,7 @@ where account.balance = max_balance.value
 * Scalar subquery(标量子查询) is used where a single value is expected
 
 ```sql
-//List all departments along with the number of instructors in 
-each department
+--List all departments along with the number of instructors in each department
 select dept_name, 
 (select count(*) 
 from instructor 
@@ -677,13 +677,13 @@ from department;
 ### Deletion
 
 ```sql
-// Delete all accounts at every branch located in Needham city
+-- Delete all accounts at every branch located in Needham city
 delete from account
 where branch_name in (select branch_name
 from branch
 where branch_city = 'Needham')
 
-//Delete the records of all accounts with balances below the 
+--Delete the records of all accounts with balances below the 
 average at the bank
 delete from account
 where balance < (select avg(balance)
@@ -693,27 +693,25 @@ from account)
 * Note: as we delete tuples from account, **the average balance changes**
 
 * Solution used in SQL:
-    * First, compute avg balance and find all tuples to delete
-    * Next, delete all tuples found above (without recomputing avg or retesting the tuples)
+  * First, compute avg balance and find all tuples to delete
+  * Next, delete all tuples found above (without recomputing avg or retesting the tuples)
 
 ### Insertion
 
 ```sql
-//Add a new tuple to account
+--Add a new tuple to account
 insert into account
 values ('A-9732', 'Perryridge',1200)
 
-//or equivalently
+--or equivalently
 insert into account (branch_name, balance, account_number)
 values ('Perryridge', 1200, 'A-9732')
 
-//Add a new tuple to account with balance setting to null
+--Add a new tuple to account with balance setting to null
 insert into account
 values ('A-777','Perryridge', null)
 
-//Provide as a gift for all loan customers of the Perryridge branch, i.e., a $200 
-saving account. Let the loan number serve as the account number for the new 
-saving account
+--Provide as a gift for all loan customers of the Perryridge branch, i.e., a $200 saving account. Let the loan number serve as the account number for the new saving account
 insert into account
 select loan_number, branch_name, 200
 from loan
@@ -747,7 +745,7 @@ where balance <= 10000
 ```sql
 update account
 set balance = case
-when balance <= 10000 then balance *1.05
+when balance <= 10000 then balance * 1.05
 else balance * 1.06
 end
 ```
