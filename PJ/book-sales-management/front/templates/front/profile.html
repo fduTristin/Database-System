@@ -1,0 +1,160 @@
+{% extends 'front/base.html' %}
+{% load static %}
+
+{% block title %}
+    个人信息
+{% endblock %}
+
+{% block custom_style %}
+
+{% endblock %}
+
+{% block custom_content %}
+
+    <div class="container-fluid">
+        <h1 class="h3 mb-4 text-gray-800">个人信息</h1>
+        <hr>
+
+        <div class="row">
+            <div class="col-lg-4 col-md-6">
+                <form class="file-upload" enctype="multipart/form-data" method="post">
+                    <div class="card mb-4">
+                        <div class="card-header py-3">
+                            <h6 class="m-0 font-weight-bold text-primary">头像</h6>
+                        </div>
+                        <div class="card-body">
+                            <div class="row g-3">
+                                <div class="col-lg-4 col-md-6">
+                                    <div class="text-center">
+                                        <input type="file" id="customFile" name="avatar" hidden accept="image/*"
+                                               onchange="showAvatar();">
+                                        <button type="button" class="btn btn-primary btn-user btn-block"
+                                                onclick="document.getElementById('customFile').click();">上传
+                                        </button>
+                                        <button type="button" class="btn btn-primary btn-user btn-block"
+                                                onclick="deleteAvatar();">删除
+                                        </button>
+                                        <button type="button" class="btn btn-primary btn-user btn-block"
+                                                onclick="submitAvatar();">提交
+                                        </button>
+                                    </div>
+                                </div>
+                                <div class="col-lg-8 col-md-6">
+                                    <div class="square position-relative display-2 mb-3">
+                                        <img src="{{ request.user.avatar.url }}" alt="Profile picture" class="img-fluid"
+                                             id="avatar-img">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="col-lg-8 col-md-6">
+                <div class="card mb-4">
+                    <div class="card-header py-3">
+                        <h6 class="m-0 font-weight-bold text-primary">基本信息</h6>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-lg-6 col-md-6">
+                                <label class="form-label">工号</label>
+                                <input type="text" class="form-control" id="work_id" readonly>
+                            </div>
+                            <div class="col-lg-6 col-md-6">
+                                <label class="form-label">账号类型</label>
+                                <input type="text" class="form-control" id="type">
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-lg-6 col-md-6">
+                                <label class="form-label">姓名</label>
+                                <input type="text" class="form-control" id="name">
+                            </div>
+                            <div class="col-lg-6 col-md-6">
+                                <label class="form-label">性别</label>
+                                <input type="text" class="form-control" id="gender">
+                            </div>
+                            {#                                <div class="col-6"> #} <!--TODO-->
+                            {#                              <label class="form-label" for="gender">性别</label>#}
+                            {#                              <div class="dropdown">#}
+                            {#                                <button class="btn btn-secondary dropdown-toggle" type="button" id="genderDropdown" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">#}
+                            {#                                  请选择性别#}
+                            {#                                </button>#}
+                            {#                                <div class="dropdown-menu" aria-labelledby="genderDropdown">#}
+                            {#                                  <a class="dropdown-item" href="#" data-value="male">男</a>#}
+                            {#                                  <a class="dropdown-item" href="#" data-value="female">女</a>#}
+                            {#                                </div>#}
+                            {#                                <input type="hidden" name="gender" id="gender">#}
+                            {#                              </div>#}
+                        </div>
+                        <div class="row">
+                            <div class="col-lg-6 col-md-6">
+                                <label class="form-label">生日</label>
+                                <input type="text" class="form-control" id="birthday">
+                            </div>
+                            <div class="col-lg-6 col-md-6">
+                                <label class="form-label">用户名</label>
+                                <input type="text" class="form-control" id="username">
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-lg-6 col-md-6">
+                                <label class="form-label">电子邮箱</label>
+                                <input type="text" class="form-control" id="email" onkeyup="checkEmail()">
+                            </div>
+                            <div class="col-lg-6 col-md-6">
+                                <label class="form-label text-danger" id="info_notice"></label>
+                                <input type="submit" value="提交" class="btn btn-primary btn-user btn-block"
+                                       id="info_submit" onclick="updateInfo()">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-4 col-md-6">
+                <div class="card mb-4">
+                    <div class="card-header py-3">
+                        <h6 class="m-0 font-weight-bold text-primary">修改密码</h6>
+                    </div>
+                    <div class="card-body">
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <label class="form-label">旧密码 *</label>
+                                <input type="password" class="form-control" id="old_pwd"
+                                       onkeyup="checkPassword()">
+                            </div>
+
+                            <div class="col-md-6">
+                                <label class="form-label">新密码 *</label>
+                                <input type="password" class="form-control" id="new_pwd"
+                                       onkeyup="checkPassword()">
+                            </div>
+
+                            <div class="col-md-6">
+                                <label class="form-label">再次输入新密码 *</label>
+                                <input type="password" class="form-control" id="re_pwd" onkeyup="checkPassword()">
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label text-danger" id="pwd_notice"></label>
+                                <input type="submit" value="更新密码" class="btn btn-primary btn-user btn-block"
+                                       id="pwd_submit" onclick="updatePassword()" disabled>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block custom_js %}
+    <script>
+        const apiUrl = '{% url 'backend:user_info' %}';
+        const updatePwdUrl = "{% url 'backend:update_pwd' %}";
+        const updateAvatarUrl = "{% url 'backend:update_avatar' %}";
+        const originAvatar = '{{ request.user.avatar.url }}';
+        const defaultAvatar = '/image/users/default.jpg';
+    </script>
+    <script src="{% static 'front/js/profile.min.js' %}"></script>
+{% endblock %}

@@ -128,7 +128,7 @@
 * A B+-tree is a rooted tree (有根树) satisfying the following properties:
   * B+-tree is a balanced tree and all the paths from root to leaf nodes are of the same length
   * Internal node
-    * Each node has between $n/2$ and $n$ children (pointers)
+    * Each node has between $\lceil n/2\rceil$ and $n$ children (pointers)
   * Leaf node
     * Each node has between $\lceil (n-1)/2\rceil$ and $n-1$ values
   * Root node
@@ -145,10 +145,164 @@
   * Pointer $P_i$ either points to a file record with search-key value $K_i$, or to a bucket of pointers to file records, each record having search-key value $K_i$. Only need bucket structure if the search-key does not form a primary key
   * $P_n$ points to next leaf node in search-key order
 
+### Non-Leaf Nodes in B+-Tree
+
+* Non leaf nodes form a **multi-level sparse index** on the leaf nodes.
+  For a non-leaf node with 𝒏 pointers:
+  * All the search-keys in the subtree to which 𝑷𝟏 points are less than 𝑲𝟏
+  * $2\leq i\leq n$, all the search-keys in the subtree to which $𝑷_𝒊$ points have values greater than or equal to $𝑲_{𝒊−𝟏}$ and less than $𝑲_𝒊$
+
+### Observations about B+-tree
+
+* Since the inter-node connections are achieved by **pointers**, "logically" close blocks need not be "physically" close
+* The non-leaf levels of the B+-tree form a hierarchy of **sparse indices**
+* The B+-tree contains a relatively small number of levels, and search can be conducted efficiently
+  * If there are 𝑲 search-key values in the file, the tree height is no more than $\lceil log_{n/2}(K)\rceil$
+* Insertions and deletions to the index file can be handled efficiently
+
+### Queries on B+-Trees
+
+* Find all records with a search-key value of 𝒌
+  * Start with the root node
+    • Check the node for the smallest search-key value > k
+    • If such a value exists, assume that it is 𝑲𝒊
+    . Then follow 𝑷𝒊 to the child node
+    • Otherwise 𝒌 ≥ 𝑲𝒏−𝟏, where there are 𝒏 pointers in the node. Then follow 𝑷𝒏 to the child node
+  * If the node reached by following the pointer above is not a leaf node, repeat the above procedure on the node, and follow the corresponding pointer
+  * Eventually reach a leaf node. If for some 𝒊, key 𝑲𝒊 = 𝒌, follow pointer 𝑷𝒊 to the desired record or bucket. Else no record with search-key value 𝒌 exists
+
+### Insertion in B+-Tree
+
+* find the leaf node where the search-key value would appear
+  * if there is room, simply insert (key_value,pointer) in the leaf node
+  * otherwise, split the node along with the new(key_value, pointer) entry
+
+* split a leaf node
+  * take the n pairs(including the one being inserted) in sorted order. Habitually place the first $\lceil n/2\rceil$ in the original node, and the rest in a new node.
+  * let the new node be **p**, and let **k** be the least key value in **p**. Insert **(k,p)** in the parent of the node being split
+  * necessarily, split the parent node and propagate the split further up
+  * in the $\textcolor{red}{\text{worst case}}$, the root node is split, thus increasing the height by 1
+
+* split a non-leaf node: when inserting **(k,p)** into a full internal node **N**
+  * $P_1,K_1,...,K_{\lceil n/2\rceil-1},P_{\lceil n/2\rceil}$ in **N**
+  * $P_{\lceil n/2\rceil+1},K_{\lceil n/2\rceil+1},...,K_n,P_{n+1}$ in **N'**
+  * $K_{\lceil n/2\rceil},N'$ in parent of N
+
+### Deletion in B+-Tree
+
+* Find the record to be deleted, and remove it from the main file and from the bucket
+* Remove (search-key value, pointer) from the leaf node if there is no bucket or if the bucket has become empty
+* 2 cases:
+  * If the node has too few entries due to the removal, and the entries in the node and a sibling fit into a single node, then **merge siblings**
+    * Insert all the search-key values in the two nodes into a single node (the one on the left), and delete the other node
+    * Delete $(K_{i-1},P_i)$ from its parent, recursively using the  above procedure
+  * If the entries in the node and a sibling don’t fit into a single node, then **redistribute pointers**
+* If the root node has only one pointer after deletion, it is deleted and the sole child becomes the root
+
 ## Static & Dynamic Hashing
+
+### Static Hashing
+
+* A bucket is a unit of storage containing one or more records (a bucket is typically a disk block)
+
+* In a hash file organization, we obtain the bucket of a record directly from its search-key value using a hash function
+
+* Hash function 𝒉 is a function from the set of all search-key values 𝑲 to the set of all bucket addresses **B**
+
+* Hash function is used to locate records for access, insertion as well as deletion
+
+* Records with different search-key values may be mapped to the same bucket; thus the entire bucket has to be searched sequentially to locate a record
+
+  ![8](pictures/8.8.png)
+
+#### Hashing Functions
+
+* **Worst hash function** maps all search-key values to the same bucket
+* **An ideal hash function** is uniform, i.e., each bucket is assigned the same number of search-key values from the set of all possible values
+* **Ideal hash function** is random, so each bucket will have the same number of records assigned to it irrespective of the actual distribution of search-key values in the file
+* **Typical hash functions** perform computation on the internal binary representation of the search-key
+
+#### Handling of Bucket Overflows
+
+* Bucket overflow can occur because of
+  * Insufficient buckets
+  * Skew in distribution of records. This can occur due to two reasons:
+    * multiple records have same search-key value
+    * chosen hash function produces non-uniform distribution of key values
+* Although the probability of bucket overflow can be reduced, it cannot be eliminated; it is handled by using **overflow buckets**
+
+* **Overflow chaining** – the **overflow buckets** of a given bucket are chained together in a linked list
+
+  ![9](pictures/8.9.png)
+
+#### Hash Indices
+
+* Hashing
+  * file organization
+  * index-structure
+
+* A hash index organizes the search keys, with their associated record pointers, into a hash file structure
+
+* Strictly speaking, hash indices are always **secondary indices**
+
+  ![10](pictures/8.10.png)
+
+#### Deficiencies of Static Hashing
+
+* function 𝒉 maps search-key values to a **fixed** set of B bucket addresses
+  * too much overflows while database growing
+  * space waste
+
+### Dynamic Hashing
+
+* Good for database that grows and shrinks in size
 
 ## Ordered Indexing vs. Hashing
 
+* what to consider
+  * Cost of periodic re-organization
+  * Frequency of insertions and deletions
+  * Whether optimizing average access time at the expense of worst-case access time
+
+* Expected type of queries
+  * Hashing is generally better at retrieving records having a specified value of the key
+  * If range queries are common, ordered indices are preferred
+
 ## Index Definition in SQL
 
+```sql
+create [UNIQUE] index <index-name> on <relation-name> (<attribute-list>)
+drop index <index-name>
+```
+
 ## Multiple-key Access
+
+* Use multiple indices for certain types of queries
+  * E.g.,
+
+    ```sql
+    select account_number
+    from account
+    where branch_name = “Perryridge” and balance = 1000
+    ```
+
+* 3 possible strategies
+  * Use index on branch_name to find accounts with branch_name = “Perryridge”, test balances of $1000;
+  * Use index on balance to find accounts with balances of $1000; test branch_name = “Perryridge”.
+  * Use branch_name index to find pointers to all records pertaining to the Perryridge branch. Similarly use index on balance. Take intersection of both sets of pointers obtained
+
+### Indices on Multiple Attributes
+
+* Suppose we have an index on combined search-key (branch_name, balance)
+  * can efficiently handle
+
+    ```sql
+    where branch_name = “Perryridge” and balance = 1000
+    where branch_name = “Perryridge” and balance < 1000
+    ```
+
+  * but not
+
+    ```sql
+    where branch-name < “Perryridge” and balance = 1000
+    ```

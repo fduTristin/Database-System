@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+{% load static %}
+<head>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <title>图书销售系统 - 登录</title>
+
+    <link href="{% static 'front/vendor/fontawesome-free/css/all.min.css' %}" rel="stylesheet" type="text/css">
+    <link href="{% static 'front/css/google.css' %}"
+          rel="stylesheet">
+
+    <link href="{% static 'front/css/sb-admin-2.min.css' %}" rel="stylesheet">
+
+</head>
+
+<body class="bg-gradient-primary">
+
+<div class="container">
+
+    <div class="row justify-content-center">
+
+        <div class="col-xl-10 col-lg-12 col-md-9">
+
+            <div class="card o-hidden border-0 shadow-lg my-5">
+                <div class="card-body p-0">
+                    <div class="row">
+                        <div class="col-lg-6 d-none d-lg-block"
+                             style="background:url({% static 'front/images/login.jfif' %});background-position: center;background-size: cover;"></div>
+                        <div class="col-lg-6">
+                            <div class="p-5">
+                                <div class="text-center">
+                                    <h1 class="h4 text-gray-900 mb-4">Welcome Back!</h1>
+                                </div>
+                                <form class="user" action="{% url 'backend:login' %}" method="post">
+                                    {% if failed %}
+                                        <script>
+                                            alert("用户名或密码错误");
+                                        </script>
+                                    {% endif %}
+
+                                    <div class="form-group">
+                                        <input type="text" name="username" class="form-control form-control-user"
+                                               id="exampleInputEmail" aria-describedby="emailHelp"
+                                               placeholder="请输入账号">
+                                    </div>
+                                    <div class="form-group">
+                                        <input type="password" name="password" class="form-control form-control-user"
+                                               id="exampleInputPassword" placeholder="请输入密码">
+                                    </div>
+                                    <div class="form-group">
+                                        <div class="custom-control custom-checkbox small">
+                                            <input type="checkbox" class="custom-control-input" id="customCheck">
+                                            <label class="custom-control-label" for="customCheck">记住密码</label>
+                                        </div>
+                                    </div>
+                                    <input type="submit" value="登录" class="btn btn-primary btn-user btn-block">
+                                </form>
+                                <hr>
+                                <div class="text-center">
+                                    <a class="small" href="javascript:alert('请联系超级管理员！');">忘记密码？</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="{% static 'front/vendor/jquery/jquery.min.js' %}"></script>
+<script src="{% static 'front/vendor/bootstrap/js/bootstrap.bundle.min.js' %}"></script>
+
+<script src="{% static 'front/vendor/jquery-easing/jquery.easing.min.js' %}"></script>
+
+<script src="{% static 'front/vendor/sb-admin-2/sb-admin-2.min.js' %}"></script>
+
+</body>
+
+</html>

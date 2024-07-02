@@ -75,7 +75,7 @@ $𝒃 ∗ 𝒕_𝑻 + 𝑺 ∗ 𝒕_𝑺$
 
 * A1' (binary search)
   * Applicable if selection is an equality comparison on the attribute on which file is ordered
-  * Assume that the blocks of a relation are stored contiguously 
+  * Assume that the blocks of a relation are stored contiguously
   * Cost estimate (number of disk blocks to be scanned):
     * cost of locating the first tuple by a binary search on the blocks
     * worst cost $\lceil log_2(b_r)\rceil * (t_T + t_S)$
@@ -245,4 +245,3 @@ for each block 𝐵𝑟 of 𝑟 do begin
   end
 end
 ```
-

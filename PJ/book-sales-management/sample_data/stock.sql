@@ -1,0 +1,12 @@
+INSERT INTO stock (stock_id, count, inventory_location, book_id) VALUES (7, 1, 'B23', 15);
+INSERT INTO stock (stock_id, count, inventory_location, book_id) VALUES (8, 2, 'B45', 20);
+INSERT INTO stock (stock_id, count, inventory_location, book_id) VALUES (3, 3, 'A21', 4);
+INSERT INTO stock (stock_id, count, inventory_location, book_id) VALUES (6, 28, 'B44', 9);
+INSERT INTO stock (stock_id, count, inventory_location, book_id) VALUES (2, 12, 'A22', 3);
+INSERT INTO stock (stock_id, count, inventory_location, book_id) VALUES (1, 17, 'A21', 1);
+INSERT INTO stock (stock_id, count, inventory_location, book_id) VALUES (5, 10, 'B31', 6);
+INSERT INTO stock (stock_id, count, inventory_location, book_id) VALUES (10, 2, 'D21', 2);
+INSERT INTO stock (stock_id, count, inventory_location, book_id) VALUES (11, 1, 'D34', 21);
+INSERT INTO stock (stock_id, count, inventory_location, book_id) VALUES (9, 7, 'C02', 7);
+INSERT INTO stock (stock_id, count, inventory_location, book_id) VALUES (4, 27, 'B20', 5);
+select setval('stock_stock_id_seq', 11);

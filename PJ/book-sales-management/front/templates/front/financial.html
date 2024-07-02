@@ -1,0 +1,204 @@
+{% extends 'front/base.html' %}
+{% load static %}
+
+{% block title %}
+    流水管理
+{% endblock %}
+
+{% block custom_style %}
+
+{% endblock %}
+
+{% block custom_content %}
+    <div class="container-fluid">
+        <div class="row">
+
+            <div class="col-xl-3 col-md-6 mb-4">
+                <div class="card border-left-primary shadow h-100 py-2">
+                    <div class="card-body">
+                        <div class="row no-gutters align-items-center">
+                            <div class="col mr-2">
+                                <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">本月收入
+                                </div>
+                                <div class="h5 mb-0 font-weight-bold text-gray-800" id="monthlyIncome"></div>
+                            </div>
+                            <div class="col-auto">
+                                <i class="fas fa-calendar fa-2x text-gray-300"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-xl-3 col-md-6 mb-4">
+                <div class="card border-left-success shadow h-100 py-2">
+                    <div class="card-body">
+                        <div class="row no-gutters align-items-center">
+                            <div class="col mr-2">
+                                <div class="text-xs font-weight-bold text-success text-uppercase mb-1">本月支出
+                                </div>
+                                <div class="h5 mb-0 font-weight-bold text-gray-800" id="monthlyExpend"></div>
+                            </div>
+                            <div class="col-auto">
+                                <i class="fas fa-dollar-sign fa-2x text-gray-300"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-xl-3 col-md-6 mb-4">
+                <div class="card border-left-info shadow h-100 py-2">
+                    <div class="card-body">
+                        <div class="row no-gutters align-items-center">
+                            <div class="col mr-2">
+                                <div class="text-xs font-weight-bold text-info text-uppercase mb-1">本月流水</div>
+                                <div class="row no-gutters align-items-center">
+                                    <div class="col-auto">
+                                        <div class="h5 mb-0 mr-3 font-weight-bold text-gray-800" id="totalCount"></div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-auto">
+                                <i class="fas fa-clipboard-list fa-2x text-gray-300"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-xl-3 col-md-6 mb-4">
+                <div class="card border-left-warning shadow h-100 py-2">
+                    <div class="card-body">
+                        <div class="row no-gutters align-items-center">
+                            <div class="col mr-2">
+                                <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">待处理流水
+                                </div>
+                                <div class="h5 mb-0 font-weight-bold text-gray-800" id="pendingCount"></div>
+                            </div>
+                            <div class="col-auto">
+                                <i class="fas fa-comments fa-2x text-gray-300"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-12">
+                <div class="card shadow mb-4">
+                    <div class="card-header py-3">
+                        <h6 class="m-0 font-weight-bold text-primary">财务流水信息</h6>
+                    </div>
+                    <div class="card-body">
+                        <div class="d-flex justify-content-end mb-2">
+                            <div class="custom-control custom-checkbox">
+                                <input type="checkbox" class="custom-control-input" id="showExpenditure"
+                                       onchange="filterOrders();" checked>
+                                <label class="custom-control-label"
+                                       for="showExpenditure">支出&nbsp;&nbsp;</label>
+                            </div>
+                            <div class="custom-control custom-checkbox">
+                                <input type="checkbox" class="custom-control-input" id="showIncome"
+                                       onchange="filterOrders();" checked>
+                                <label class="custom-control-label"
+                                       for="showIncome">收入&nbsp;&nbsp;</label>
+                            </div>
+                            <div class="custom-control custom-checkbox">
+                                <input type="checkbox" class="custom-control-input" id="showPending"
+                                       onchange="filterOrders();">
+                                <label class="custom-control-label"
+                                       for="showPending">只显示待处理</label>
+                            </div>
+                        </div>
+                        <div class="table-responsive">
+                            <table class="table table-bordered js-sort-table" id="dataTable" width="100%"
+                                   cellspacing="0">
+                                <thead>
+                                <tr>
+                                    <th class="text-center">流水类型</th>
+                                    <th class="js-sort-number">流水编号 #</th>
+                                    <th>订单编号 #</th>
+                                    <th>流水状态</th>
+                                    <th class="js-sort-number">金额</th>
+                                    <th class="js-sort-date">创建时间</th>
+                                    <th>更多操作</th>
+                                </tr>
+                                </thead>
+                                <tbody id="orders_tbody">
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal -->
+    <div class="modal fade" id="orderDetailsModal" tabindex="-1" role="dialog" aria-labelledby="orderDetailsModalLabel"
+         aria-hidden="true">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="orderDetailsModalLabel">Order Details</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="container-fluid">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div id="order-info">
+                                    <!--在此插入订单基本信息-->
+                                </div>
+                                <hr>
+                                <div style="height: 260px; overflow-y: scroll;">
+                                    <div class="table-responsive">
+                                        <table class="table">
+                                            <thead>
+                                            <tr>
+                                                <th>封面</th>
+                                                <th>书名</th>
+                                                <th>数量</th>
+                                                <th>单价</th>
+                                            </tr>
+                                            </thead>
+                                            <tbody id="items">
+                                            <!--在此插入订单物品-->
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                                <hr>
+                                <div id="amount"></div>
+                            </div>
+                            <div class="col-md-6">
+                                <ul class="timeline" id="timeline">
+                                    <!--在此插入订单时间线-->
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+{% endblock %}
+
+{% block custom_js %}
+    <script>
+        const orderApi = "{% url 'backend:financial_info' %}";
+        const orderItemsApi = "{% url 'backend:order_items' %}";
+        const updateOrderStatusApi = "{% url 'backend:update_financial_status' %}";
+    </script>
+    <script src="{% static 'front/js/financial.min.js' %}"></script>
+    <script src="{% static 'front/vendor/datatables/sort-table.min.js' %}"></script>
+{% endblock %}
+

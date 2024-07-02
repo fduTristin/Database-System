@@ -92,12 +92,12 @@ $\alpha\rightarrow\beta$ is in $F^+$ $\Rightarrow \beta\subseteq\alpha^+$
 * intuitively, a canonical cover of F is a  "minimal" set of FDs equivalent to F, having no redundant FDs or redundant parts of FDs
 * extraneous attributes
 
-* A canonical cover for F is a set of FDs 𝑭𝒄 such that 
-– 𝐹 logically implies all dependencies in 𝐹𝑐
-, and
-– 𝐹𝑐 logically implies all dependencies in 𝐹, and
-– No FD in 𝐹𝑐 contains an extraneous attribute, and
-– Each left side of FD in 𝐹𝑐 is unique, i.e., there are no two FDs 𝛼1 → 𝛽1 and 𝛼2 → 𝛽2 such that 𝛼1 = 𝛼2
+* A canonical cover for F is a set of FDs 𝑭𝒄 such that
+  * 𝐹 logically implies all dependencies in 𝐹𝑐
+  , and
+  * 𝐹𝑐 logically implies all dependencies in 𝐹, and
+  * No FD in 𝐹𝑐 contains an extraneous attribute, and
+  * Each left side of FD in 𝐹𝑐 is unique, i.e., there are no two FDs 𝛼1 → 𝛽1 and 𝛼2 → 𝛽2 such that 𝛼1 = 𝛼2
 
 * To compute a canonical cover for 𝐹:
 **repeat**
@@ -114,11 +114,10 @@ $R_1\cap R_2\rightarrow R_1$, or $R_1\cap R_2\rightarrow R_2$
 
 ### Dependency Preservation
 
-* When we decompose a relation schema 𝑹 with a set of FDs F into 
-𝑹𝟏, 𝑹𝟐,.., 𝑹𝒏 we want
-– Lossless-join decomposition: Otherwise decomposition would result in information loss
-– No redundancy: The relations 𝑹𝒊 preferably should be in either BCNF or 3NF
-– Dependency preservation: Let 𝑭𝒊 be the subset of dependencies $F^+$ that include only attributes in 𝑹𝒊
+* When we decompose a relation schema 𝑹 with a set of FDs F into 𝑹𝟏, 𝑹𝟐,.., 𝑹𝒏 we want
+* Lossless-join decomposition: Otherwise decomposition would result in information loss
+* No redundancy: The relations 𝑹𝒊 preferably should be in either BCNF or 3NF
+* Dependency preservation: Let 𝑭𝒊 be the subset of dependencies $F^+$ that include only attributes in 𝑹𝒊
 • $(𝑭𝟏 ∪ 𝑭𝟐 ∪ ⋯ ∪ 𝑭𝒏)^+= 𝑭^+$
 • Otherwise, checking updates for violation of FDs may require computing joins, which is expensive
 
